@@ -1,0 +1,32 @@
+import mongoose from 'mongoose'
+
+interface IUser {
+    role: 'admin' | 'delivery' | 'storage' | 'bar'
+    username: string
+    password: string
+    token?: string
+}
+
+const userSchema = new mongoose.Schema({
+    role: {
+        type: String,
+        enum: ['admin', 'delivery', 'storage', 'bar'],
+        required: true,
+    },
+    username: {
+        type: String,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    token: {
+        type: String,
+        required: false,
+    },
+})
+
+const User = mongoose.model('User', userSchema)
+
+export { User, IUser }

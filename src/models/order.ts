@@ -1,0 +1,71 @@
+import mongoose from 'mongoose'
+
+interface IOrder {
+    createdBy: string
+    orderItems: IOrderItem[]
+    confirmedOrderStorageId?: string
+    confirmPackedOrderStorage?: IOrderItem[]
+    confirmOrderPickupId?: string
+    confirmOrderPickedUp?: IOrderItem[]
+    confirmDeliveredOrderBarId?: string
+    confirmDeliveredOrderBar: IOrderItem[]
+    confirmDeliveredOrderDeliveryId?: string
+    confirmDeliveredOrderDelivery?: IOrderItem[]
+}
+interface IOrderItem {
+    itemId: string
+    quantity: number
+}
+
+const orderSchema = new mongoose.Schema({
+    createdBy: {
+        type: String,
+        required: true,
+    },
+    orderedItems: [
+        {
+            itemId: String,
+            quantity: Number,
+        },
+    ],
+    confirmedOrderStorageId: {
+        type: String,
+    },
+    confirmPackedOrderStorage: [
+        {
+            itemId: String,
+            quantity: Number,
+        },
+    ],
+    confirmOrderPickupId: {
+        type: String,
+    },
+    confirmOrderPickedUp: [
+        {
+            itemId: String,
+            quantity: Number,
+        },
+    ],
+    confirmDeliveredOrderBarId: {
+        type: String,
+    },
+    confirmDeliveredOrderBar: [
+        {
+            itemId: String,
+            quantity: Number,
+        },
+    ],
+    confirmDeliveredOrderDeliveryId: {
+        type: String,
+    },
+    confirmDeliveredOrderDelivery: [
+        {
+            itemId: String,
+            quantity: Number,
+        },
+    ],
+})
+
+const Order = mongoose.model('Order', orderSchema)
+
+export { Order, IOrder }
