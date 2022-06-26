@@ -2,6 +2,7 @@ import express from 'express'
 import { User } from '../models/user'
 
 import jsonwebtoken from 'jsonwebtoken'
+import { isAuthenticated } from '../midlwares/auth'
 
 const router = express.Router()
 
@@ -17,13 +18,16 @@ router.post('/login', function (req, res, next) {
                 return next(new Error('Wrong credentials'))
             }
 
-            const token = jsonwebtoken.sign({ userId: user.id }, 'mysecretkey')
+            const token = jsonwebtoken.sign(
+                { userId: user.id, role: user.role },
+                'mysecretkey'
+            )
 
             User.findOneAndUpdate(
                 { username: username },
                 { token: token }
             ).catch((err) => console.log('err update => ', err))
-            res.json({ user, token: 'Bearer ' + token })
+            res.json({ token: 'Bearer ' + token })
         })
         .catch((err) => {
             console.log('====================================')
@@ -31,6 +35,11 @@ router.post('/login', function (req, res, next) {
             console.log('====================================')
             return next(err)
         })
+})
+
+router.get('/test-token', isAuthenticated, function (req, res, next) {
+    console.log('la test')
+    res.send({ muie: res.req.body.user })
 })
 
 export default router
