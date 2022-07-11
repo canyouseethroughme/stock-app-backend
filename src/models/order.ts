@@ -5,6 +5,7 @@ interface IOrder {
     orderItems: IOrderItem[]
     confirmedOrderStorageId?: string
     confirmPackedOrderStorage?: IOrderItem[]
+    confirmPackedOrderStorageId?: string
     confirmOrderPickupId?: string
     confirmOrderPickedUp?: IOrderItem[]
     confirmDeliveredOrderBarId?: string
