@@ -28,6 +28,9 @@ const orderSchema = new mongoose.Schema({
             quantity: Number,
         },
     ],
+    comment: {
+        type: String,
+    },
     confirmedOrderStorageId: {
         type: String,
     },

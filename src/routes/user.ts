@@ -9,8 +9,11 @@ const router = express.Router()
 router.post('/login', function (req, res, next) {
     const { username, password } = req.body
 
-    User.findOne({ where: { username } })
+    User.findOne({ username })
+        .exec()
         .then((user) => {
+            console.log('username => ', username)
+            console.log('password => ', password)
             console.log('🚀 ~ file: user.ts ~ line 13 ~ .then ~ user', user)
             if (!user) return next(new Error('Wrong credentials'))
 
@@ -23,10 +26,9 @@ router.post('/login', function (req, res, next) {
                 'mysecretkey'
             )
 
-            User.findOneAndUpdate(
-                { username: username },
-                { token: token }
-            ).catch((err) => console.log('err update => ', err))
+            User.findOneAndUpdate({ username }, { token: token }).catch((err) =>
+                console.log('err update => ', err)
+            )
             res.json({ token: 'Bearer ' + token })
         })
         .catch((err) => {
