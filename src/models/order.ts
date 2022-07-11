@@ -40,6 +40,9 @@ const orderSchema = new mongoose.Schema({
             quantity: Number,
         },
     ],
+    confirmPackedOrderStorageId: {
+        type: String,
+    },
     confirmOrderPickupId: {
         type: String,
     },

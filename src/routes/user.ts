@@ -12,9 +12,6 @@ router.post('/login', function (req, res, next) {
     User.findOne({ username })
         .exec()
         .then((user) => {
-            console.log('username => ', username)
-            console.log('password => ', password)
-            console.log('🚀 ~ file: user.ts ~ line 13 ~ .then ~ user', user)
             if (!user) return next(new Error('Wrong credentials'))
 
             if (user.password !== password) {
