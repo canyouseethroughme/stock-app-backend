@@ -4,6 +4,10 @@ import { Order } from '../models/order'
 
 const router = express.Router()
 
+router.get('/', isAuthenticated, function (req, res, next) {
+    Order.find({}).then((items) => res.json({ orders: items }))
+})
+
 //create order
 router.post('/create-order', isAuthenticated, function (req, res, next) {
     const { user, orderedItems, comment } = req?.body
