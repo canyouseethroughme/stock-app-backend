@@ -47,43 +47,43 @@ export const createUsers = () => {
         role: 'bar',
         username: 'bar1',
         password: 'bar1',
-        bar: 'Vessel',
+        barName: 'Vessel',
     })
     User.create({
         role: 'bar',
         username: 'bar2',
         password: 'bar2',
-        bar: 'Space',
+        barName: 'Space',
     })
     User.create({
         role: 'bar',
         username: 'bar3',
         password: 'bar3',
-        bar: 'Astral',
+        barName: 'Astral',
     })
     User.create({
         role: 'bar',
         username: 'bar4',
         password: 'bar4',
-        bar: 'Vessel',
+        barName: 'Vessel',
     })
     User.create({
         role: 'bar',
         username: 'bar5',
         password: 'bar5',
-        bar: 'Space',
+        barName: 'Space',
     })
     User.create({
         role: 'bar',
         username: 'bar6',
         password: 'bar6',
-        bar: 'Astral',
+        barName: 'Astral',
     })
     User.create({
         role: 'bar',
         username: 'bar7',
         password: 'bar7',
-        bar: 'Vessel',
+        barName: 'Vessel',
     })
 
     User.create({ role: 'storage', username: 'storage1', password: 'storage1' })

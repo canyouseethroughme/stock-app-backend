@@ -19,7 +19,12 @@ router.post('/login', function (req, res, next) {
             }
 
             const token = jsonwebtoken.sign(
-                { userId: user.id, role: user.role },
+                {
+                    userId: user.id,
+                    role: user.role,
+                    barName: user?.barName,
+                    username: user.username,
+                },
                 'mysecretkey'
             )
 

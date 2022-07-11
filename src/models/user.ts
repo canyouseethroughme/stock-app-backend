@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    name: {
+    barName: {
         type: String,
         enum: ['Vessel', 'Space', 'Astral'],
         required: false,
