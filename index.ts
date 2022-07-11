@@ -19,7 +19,7 @@ app.use(cors())
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })
-createUsers()
+// createUsers()
 // createStorage()
 app.use('/users', usersRouter)
 app.use('/orders', ordersRouter)

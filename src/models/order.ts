@@ -17,60 +17,69 @@ interface IOrderItem {
     quantity: number
 }
 
-const orderSchema = new mongoose.Schema({
-    createdBy: {
-        type: String,
-        required: true,
-    },
-    orderedItems: [
-        {
-            itemId: String,
-            quantity: Number,
+const orderSchema = new mongoose.Schema(
+    {
+        createdBy: {
+            type: String,
+            required: true,
         },
-    ],
-    comment: {
-        type: String,
-    },
-    confirmedOrderStorageId: {
-        type: String,
-    },
-    confirmPackedOrderStorage: [
-        {
-            itemId: String,
-            quantity: Number,
+        barName: {
+            type: String,
+            required: true,
         },
-    ],
-    confirmPackedOrderStorageId: {
-        type: String,
-    },
-    confirmOrderPickupId: {
-        type: String,
-    },
-    confirmOrderPickedUp: [
-        {
-            itemId: String,
-            quantity: Number,
+        orderedItems: [
+            {
+                itemId: String,
+                quantity: Number,
+            },
+        ],
+        comment: {
+            type: String,
         },
-    ],
-    confirmDeliveredOrderBarId: {
-        type: String,
-    },
-    confirmDeliveredOrderBar: [
-        {
-            itemId: String,
-            quantity: Number,
+        confirmedOrderStorageId: {
+            type: String,
         },
-    ],
-    confirmDeliveredOrderDeliveryId: {
-        type: String,
-    },
-    confirmDeliveredOrderDelivery: [
-        {
-            itemId: String,
-            quantity: Number,
+        confirmPackedOrderStorage: [
+            {
+                itemId: String,
+                quantity: Number,
+            },
+        ],
+        confirmPackedOrderStorageId: {
+            type: String,
         },
-    ],
-})
+        confirmOrderPickupId: {
+            type: String,
+        },
+        confirmOrderPickedUp: [
+            {
+                itemId: String,
+                quantity: Number,
+            },
+        ],
+        confirmDeliveredOrderBarId: {
+            type: String,
+        },
+        confirmDeliveredOrderBar: [
+            {
+                itemId: String,
+                quantity: Number,
+            },
+        ],
+        confirmDeliveredOrderDeliveryId: {
+            type: String,
+        },
+        confirmDeliveredOrderDelivery: [
+            {
+                itemId: String,
+                quantity: Number,
+            },
+        ],
+    },
+    {
+        timestamps: true,
+    }
+)
 
 const Order = mongoose.model('Order', orderSchema)
 

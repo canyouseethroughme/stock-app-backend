@@ -29,6 +29,7 @@ router.post('/create-order', isAuthenticated, function (req, res, next) {
 
         Order.create({
             createdBy: user.id,
+            barName: user?.barName ?? 'admin',
             orderedItems,
             comment,
         }).then((newOrder) =>
