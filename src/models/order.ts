@@ -18,6 +18,7 @@ interface IOrderItem {
     itemId: string
     quantity: number
     name: string
+    measurementUnit: string
 }
 
 const orderSchema = new mongoose.Schema(
@@ -35,6 +36,7 @@ const orderSchema = new mongoose.Schema(
                 itemId: String,
                 quantity: Number,
                 name: String,
+                measurementUnit: String,
             },
         ],
         comment: {
@@ -48,6 +50,7 @@ const orderSchema = new mongoose.Schema(
                 itemId: String,
                 quantity: Number,
                 name: String,
+                measurementUnit: String,
             },
         ],
         confirmPackedOrderStorageId: {
@@ -61,6 +64,7 @@ const orderSchema = new mongoose.Schema(
                 itemId: String,
                 quantity: Number,
                 name: String,
+                measurementUnit: String,
             },
         ],
         confirmDeliveredOrderBarId: {
@@ -71,6 +75,7 @@ const orderSchema = new mongoose.Schema(
                 itemId: String,
                 quantity: Number,
                 name: String,
+                measurementUnit: String,
             },
         ],
         confirmDeliveredOrderDeliveryId: {
@@ -81,6 +86,7 @@ const orderSchema = new mongoose.Schema(
                 itemId: String,
                 quantity: Number,
                 name: String,
+                measurementUnit: String,
             },
         ],
     },

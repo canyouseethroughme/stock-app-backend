@@ -16,6 +16,10 @@ router.post('/create-order', isAuthenticated, function (req, res, next) {
         return next(new Error('You dont have the rights'))
     }
 
+    if (orderedItems?.lengh === 0) {
+        return next(new Error('You need to add at least one item'))
+    }
+
     Order.find({ createdBy: user.id }).then((orders) => {
         const activeOrders = orders.filter(
             (item) =>
@@ -239,5 +243,34 @@ router.post(
         })
     }
 )
+
+//get active orders
+router.get('/active-orders', isAuthenticated, function (req, res, next) {
+    const { user } = req.body
+
+    if (
+        user.role === 'admin' ||
+        user.role === 'bar' ||
+        user.role === 'delivery'
+    ) {
+        Order.find({
+            confirmDeliveredOrderBarId: undefined,
+            confirmDeliveredOrderDeliveryId: undefined,
+        }).then((orders) => res.json({ orders }))
+    }
+
+    if (user.role === 'bar') {
+        Order.find({ confirmOrderPickupId: undefined }).then((orders) =>
+            res.json({ orders })
+        )
+    }
+})
+
+//get order by id
+router.get('/:id', isAuthenticated, function (req, res, next) {
+    const { id } = req.params
+
+    Order.findById(id).then((order) => res.json({ order }))
+})
 
 export default router
