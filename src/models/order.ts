@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 interface IOrder {
     createdBy: string
-    orderItems: IOrderItem[]
+    orderedItems: IOrderItem[]
     comment?: string
     confirmedOrderStorageId?: string
     confirmPackedOrderStorage?: IOrderItem[]

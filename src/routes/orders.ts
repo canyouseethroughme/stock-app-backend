@@ -43,7 +43,7 @@ router.post('/create-order', isAuthenticated, function (req, res, next) {
 })
 
 //confirm order from storage
-router.post(
+router.put(
     '/confirm-order-storage',
     isAuthenticated,
     function (req, res, next) {
@@ -78,50 +78,46 @@ router.post(
 )
 
 // confirm packed order
-router.post(
-    '/confirm-packed-order',
-    isAuthenticated,
-    function (req, res, next) {
-        const { user, orderId, confirmPackedOrderStorage } = req?.body
+router.put('/confirm-packed-order', isAuthenticated, function (req, res, next) {
+    const { user, orderId, confirmPackedOrderStorage } = req?.body
 
-        if (!user || (user.role !== 'storage' && user.role !== 'admin')) {
-            return next(new Error('You dont have the rights'))
-        }
-        if (!orderId || !confirmPackedOrderStorage) {
-            return next(
-                new Error(
-                    'You need to provide orderId and confirmPackedOrderStorage'
-                )
-            )
-        }
-
-        Order.findById(orderId).then((order) => {
-            if (order?.confirmPackedOrderStorageId) {
-                return next(new Error('Order is already confirmed'))
-            }
-
-            Order.findOneAndUpdate(
-                { id: orderId },
-                {
-                    confirmPackedOrderStorageId: user.id,
-                    confirmPackedOrderStorage,
-                }
-            )
-                .catch((err) =>
-                    next(new Error('something went wrong, please try again'))
-                )
-                .then((updatedOrder) => {
-                    res.json({
-                        message: 'Order packed successfully!',
-                        order: updatedOrder,
-                    })
-                })
-        })
+    if (!user || (user.role !== 'storage' && user.role !== 'admin')) {
+        return next(new Error('You dont have the rights'))
     }
-)
+    if (!orderId || !confirmPackedOrderStorage) {
+        return next(
+            new Error(
+                'You need to provide orderId and confirmPackedOrderStorage'
+            )
+        )
+    }
+
+    Order.findById(orderId).then((order) => {
+        if (order?.confirmPackedOrderStorageId) {
+            return next(new Error('Order is already confirmed'))
+        }
+
+        Order.findOneAndUpdate(
+            { id: orderId },
+            {
+                confirmPackedOrderStorageId: user.id,
+                confirmPackedOrderStorage,
+            }
+        )
+            .catch((err) =>
+                next(new Error('something went wrong, please try again'))
+            )
+            .then((updatedOrder) => {
+                res.json({
+                    message: 'Order packed successfully!',
+                    order: updatedOrder,
+                })
+            })
+    })
+})
 
 //confirm order pick up
-router.post('/confirm-pick-up', isAuthenticated, function (req, res, next) {
+router.put('/confirm-pick-up', isAuthenticated, function (req, res, next) {
     const { user, orderId, confirmOrderPickedUp } = req?.body
 
     if (!user || (user.role !== 'delivery' && user.role !== 'admin')) {
@@ -159,7 +155,7 @@ router.post('/confirm-pick-up', isAuthenticated, function (req, res, next) {
 })
 
 // confirm delivered order items from bar
-router.post(
+router.put(
     '/confirm-delivered-bar',
     isAuthenticated,
     function (req, res, next) {
@@ -202,7 +198,7 @@ router.post(
 )
 
 // confirm delivered order items from delivery team
-router.post(
+router.put(
     '/confirm-delivery-delivery',
     isAuthenticated,
     function (req, res, next) {
