@@ -5,7 +5,25 @@ import { Order } from '../models/order'
 const router = express.Router()
 
 router.get('/', isAuthenticated, function (req, res, next) {
-    Order.find({}).then((items) => res.json({ orders: items }))
+    const { user } = req?.body
+    Order.find({}).then((items) => {
+        if (user.role === 'bar') {
+            const barOrders = items.filter((item) => item.createdBy === user.id)
+            return res.json({ orders: barOrders })
+        }
+        return res.json({ orders: items })
+    })
+})
+
+router.put('/edit-order', isAuthenticated, function (req, res, next) {
+    const { user, orderedItems, comment, orderId } = req?.body
+    if (!user || user.role !== 'bar' || user.role !== 'admin')
+        Order.findByIdAndUpdate(orderId, {
+            orderedItems,
+            comment,
+        }).then((newOrder) =>
+            res.json({ message: 'Order updated successfully', order: newOrder })
+        )
 })
 
 //create order
@@ -48,6 +66,8 @@ router.put(
     isAuthenticated,
     function (req, res, next) {
         const { user, orderId } = req?.body
+        console.log('🚀 ~ file: orders.ts ~ line 51 ~ orderId', orderId)
+
         if (!user || (user?.role !== 'storage' && user?.role !== 'admin')) {
             return next(new Error('You dont have the rights'))
         }
@@ -55,19 +75,23 @@ router.put(
             return next(new Error('You need to provide an orderId'))
         }
         Order.findById(orderId).then((order) => {
-            console.log('order => ', order)
+            console.log('orderfound => ', order)
             if (order?.confirmedOrderStorageId) {
                 return next(new Error('Order is already confirmed'))
             }
 
-            Order.findOneAndUpdate(
-                { id: orderId },
-                { confirmedOrderStorageId: user.id }
-            )
+            Order.findByIdAndUpdate(orderId, {
+                confirmedOrderStorageId: user.id,
+            })
                 .catch((err) =>
                     next(new Error('something went wrong, please try again'))
                 )
                 .then((updatedOrder) => {
+                    console.log('orderId => ', orderId)
+                    console.log(
+                        '🚀 ~ file: orders.ts ~ line 73 ~ .then ~ updatedOrder',
+                        updatedOrder
+                    )
                     res.json({
                         message: 'Order confirmed successfully!',
                         order: updatedOrder,
@@ -97,13 +121,10 @@ router.put('/confirm-packed-order', isAuthenticated, function (req, res, next) {
             return next(new Error('Order is already confirmed'))
         }
 
-        Order.findOneAndUpdate(
-            { id: orderId },
-            {
-                confirmPackedOrderStorageId: user.id,
-                confirmPackedOrderStorage,
-            }
-        )
+        Order.findByIdAndUpdate(orderId, {
+            confirmPackedOrderStorageId: user.id,
+            confirmPackedOrderStorage,
+        })
             .catch((err) =>
                 next(new Error('something went wrong, please try again'))
             )
@@ -135,13 +156,10 @@ router.put('/confirm-pick-up', isAuthenticated, function (req, res, next) {
             return next(new Error('Order is already picked up'))
         }
 
-        Order.findOneAndUpdate(
-            { id: orderId },
-            {
-                confirmOrderPickupId: user.id,
-                confirmOrderPickedUp,
-            }
-        )
+        Order.findByIdAndUpdate(orderId, {
+            confirmOrderPickupId: user.id,
+            confirmOrderPickedUp,
+        })
             .catch((err) =>
                 next(new Error('something went wrong, please try again'))
             )
@@ -177,13 +195,10 @@ router.put(
                 )
             }
 
-            Order.findOneAndUpdate(
-                { id: orderId },
-                {
-                    confirmDeliveredOrderBarId: user.id,
-                    confirmDeliveredOrderBar: confirmedItems,
-                }
-            )
+            Order.findByIdAndUpdate(orderId, {
+                confirmDeliveredOrderBarId: user.id,
+                confirmDeliveredOrderBar: confirmedItems,
+            })
                 .catch((err) =>
                     next(new Error('something went wrong, please try again'))
                 )
@@ -220,13 +235,10 @@ router.put(
                 )
             }
 
-            Order.findOneAndUpdate(
-                { id: orderId },
-                {
-                    confirmDeliveredOrderDeliveryId: user.id,
-                    confirmDeliveredOrderDelivery: confirmedItems,
-                }
-            )
+            Order.findByIdAndUpdate(orderId, {
+                confirmDeliveredOrderDeliveryId: user.id,
+                confirmDeliveredOrderDelivery: confirmedItems,
+            })
                 .catch((err) =>
                     next(new Error('something went wrong, please try again'))
                 )
@@ -256,9 +268,12 @@ router.get('/active-orders', isAuthenticated, function (req, res, next) {
     }
 
     if (user.role === 'bar') {
-        Order.find({ confirmOrderPickupId: undefined }).then((orders) =>
-            res.json({ orders })
-        )
+        Order.find({ confirmOrderPickupId: undefined }).then((orders) => {
+            const barOrders = orders.filter(
+                (item) => item.createdBy === user.id
+            )
+            res.json({ orders: barOrders })
+        })
     }
 })
 
