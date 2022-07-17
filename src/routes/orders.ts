@@ -68,33 +68,31 @@ router.post('/create-order', isAuthenticated, function (req, res, next) {
             orderedItems,
             comment,
         }).then((newOrder) => {
+            console.log(
+                '🚀 ~ file: orders.ts ~ line 59 ~ Order.find ~ newOrder',
+                newOrder
+            )
+
+            newOrder.orderedItems.forEach((item: unknown) => {
+                const orderedQuantity = (item as IOrderItem).quantity
+                const itemId = (item as IOrderItem).itemId
+
+                Storage.findById(itemId).then((foundStorageItem) => {
+                    const currentTotalQuantity = foundStorageItem?.quantity
+                    const newQuantity =
+                        (currentTotalQuantity as number) - orderedQuantity
+
+                    Storage.findByIdAndUpdate(itemId, {
+                        quantity: newQuantity,
+                    }).then((newItem) =>
+                        console.log('updated item => ', newItem)
+                    )
+                })
+            })
             res.json({
                 message: 'Order created successfully',
                 oder: newOrder,
             })
-
-            // Promise.all(
-            //     newOrder.orderedItems.forEach((item: IOrderItem) => {
-            //         Storage.findById(item.itemId).then(
-            //             (element: unknown) => {
-            //                 console.log(
-            //                     'elementQuantity => ',
-            //                     (element as IOrderItem).quantity
-            //                 )
-            //             }
-            //             // Storage.findByIdAndUpdate(item.itemId, {
-            //             //     quantity:
-            //             //         (element as IOrderItem).quantity -
-            //             //         item.quantity,
-            //             // })
-            //         )
-            //     })
-            // ).then((result) =>
-            //     res.json({
-            //         message: 'Order created successfully',
-            //         oder: newOrder,
-            //     })
-            // )
         })
     })
 })
@@ -105,7 +103,6 @@ router.put(
     isAuthenticated,
     function (req, res, next) {
         const { user, orderId } = req?.body
-        console.log('🚀 ~ file: orders.ts ~ line 51 ~ orderId', orderId)
 
         if (!user || (user?.role !== 'storage' && user?.role !== 'admin')) {
             return next(new Error('You dont have the rights'))
