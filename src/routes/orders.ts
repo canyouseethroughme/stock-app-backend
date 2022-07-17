@@ -19,9 +19,30 @@ router.get('/', isAuthenticated, function (req, res, next) {
 router.delete('/:orderId', isAuthenticated, function (req, res, next) {
     const { orderId } = req.params
     const { user } = req?.body
-    if (!user || user.role !== 'bar' || user.role !== 'admin') {
+    if (!user || (user.role !== 'bar' && user.role !== 'admin')) {
         return next(new Error("You don't have the rights"))
     }
+
+    Order.findById(orderId).then((item) => {
+        if (item && item.orderedItems) {
+            item?.orderedItems.forEach((item: unknown) => {
+                const orderedQuantity = (item as IOrderItem).quantity
+                const itemId = (item as IOrderItem).itemId
+
+                Storage.findById(itemId).then((foundStorageItem) => {
+                    const currentTotalQuantity = foundStorageItem?.quantity
+                    const newQuantity =
+                        (currentTotalQuantity as number) + orderedQuantity
+
+                    Storage.findByIdAndUpdate(itemId, {
+                        quantity: newQuantity,
+                    }).then((newItem) =>
+                        console.log('updated item => ', newItem)
+                    )
+                })
+            })
+        }
+    })
 
     Order.findByIdAndDelete(orderId).then((item) =>
         res.json({ message: 'Item deleted successfully' })
@@ -31,12 +52,48 @@ router.delete('/:orderId', isAuthenticated, function (req, res, next) {
 router.put('/edit-order', isAuthenticated, function (req, res, next) {
     const { user, orderedItems, comment, orderId } = req?.body
     if (!user || user.role !== 'bar' || user.role !== 'admin')
-        Order.findByIdAndUpdate(orderId, {
-            orderedItems,
-            comment,
-        }).then((newOrder) =>
-            res.json({ message: 'Order updated successfully', order: newOrder })
-        )
+        Order.findById(orderId).then((item) => {
+            if (item && item.orderedItems) {
+                item?.orderedItems.forEach((orderItem: unknown) => {
+                    const orderedQuantity = (orderItem as IOrderItem).quantity
+                    const itemId = (orderItem as IOrderItem).itemId
+
+                    Storage.findById(itemId).then((foundStorageItem) => {
+                        const currentTotalQuantity = foundStorageItem?.quantity
+                        const newQuantity =
+                            (currentTotalQuantity as number) + orderedQuantity
+
+                        Storage.findByIdAndUpdate(itemId, {
+                            quantity: newQuantity,
+                        }).then((newItem) =>
+                            console.log('updated item => ', newItem)
+                        )
+                    })
+                })
+            }
+        })
+
+    orderedItems.forEach((orderItem: unknown) => {
+        const orderedQuantity = (orderItem as IOrderItem).quantity
+        const itemId = (orderItem as IOrderItem).itemId
+
+        Storage.findById(itemId).then((foundStorageItem) => {
+            const currentTotalQuantity = foundStorageItem?.quantity
+            const newQuantity =
+                (currentTotalQuantity as number) + orderedQuantity
+
+            Storage.findByIdAndUpdate(itemId, {
+                quantity: newQuantity,
+            }).then((newItem) => console.log('updated item => ', newItem))
+        })
+    })
+
+    Order.findByIdAndUpdate(orderId, {
+        orderedItems,
+        comment,
+    }).then((newOrder) =>
+        res.json({ message: 'Order updated successfully', order: newOrder })
+    )
 })
 
 //create order
