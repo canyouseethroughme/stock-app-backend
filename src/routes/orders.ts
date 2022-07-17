@@ -59,9 +59,20 @@ router.put('/edit-order', isAuthenticated, function (req, res, next) {
                     const itemId = (orderItem as IOrderItem).itemId
 
                     Storage.findById(itemId).then((foundStorageItem) => {
+                        const newOrderedIndex = orderedItems.findIndex(
+                            (el: IOrderItem) =>
+                                el.itemId === (orderItem as IOrderItem).itemId
+                        )
+                        let currentOrderedNo = 0
+                        if (newOrderedIndex >= 0) {
+                            currentOrderedNo =
+                                orderedItems[newOrderedIndex].quantity
+                        }
                         const currentTotalQuantity = foundStorageItem?.quantity
                         const newQuantity =
-                            (currentTotalQuantity as number) + orderedQuantity
+                            (currentTotalQuantity as number) +
+                            orderedQuantity -
+                            currentOrderedNo
 
                         Storage.findByIdAndUpdate(itemId, {
                             quantity: newQuantity,
@@ -72,21 +83,6 @@ router.put('/edit-order', isAuthenticated, function (req, res, next) {
                 })
             }
         })
-
-    orderedItems.forEach((orderItem: unknown) => {
-        const orderedQuantity = (orderItem as IOrderItem).quantity
-        const itemId = (orderItem as IOrderItem).itemId
-
-        Storage.findById(itemId).then((foundStorageItem) => {
-            const currentTotalQuantity = foundStorageItem?.quantity
-            const newQuantity =
-                (currentTotalQuantity as number) + orderedQuantity
-
-            Storage.findByIdAndUpdate(itemId, {
-                quantity: newQuantity,
-            }).then((newItem) => console.log('updated item => ', newItem))
-        })
-    })
 
     Order.findByIdAndUpdate(orderId, {
         orderedItems,
