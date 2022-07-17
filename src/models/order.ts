@@ -97,4 +97,4 @@ const orderSchema = new mongoose.Schema(
 
 const Order = mongoose.model('Order', orderSchema)
 
-export { Order, IOrder }
+export { Order, IOrder, IOrderItem }

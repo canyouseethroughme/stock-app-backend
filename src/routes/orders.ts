@@ -1,6 +1,7 @@
 import express from 'express'
 import { isAuthenticated } from '../midlwares/auth'
-import { Order } from '../models/order'
+import { Order, IOrderItem } from '../models/order'
+import { Storage } from '../models/storage'
 
 const router = express.Router()
 
@@ -13,6 +14,18 @@ router.get('/', isAuthenticated, function (req, res, next) {
         }
         return res.json({ orders: items })
     })
+})
+
+router.delete('/:orderId', isAuthenticated, function (req, res, next) {
+    const { orderId } = req.params
+    const { user } = req?.body
+    if (!user || user.role !== 'bar' || user.role !== 'admin') {
+        return next(new Error("You don't have the rights"))
+    }
+
+    Order.findByIdAndDelete(orderId).then((item) =>
+        res.json({ message: 'Item deleted successfully' })
+    )
 })
 
 router.put('/edit-order', isAuthenticated, function (req, res, next) {
@@ -54,9 +67,35 @@ router.post('/create-order', isAuthenticated, function (req, res, next) {
             barName: user?.barName ?? 'admin',
             orderedItems,
             comment,
-        }).then((newOrder) =>
-            res.json({ message: 'Order created successfully', oder: newOrder })
-        )
+        }).then((newOrder) => {
+            res.json({
+                message: 'Order created successfully',
+                oder: newOrder,
+            })
+
+            // Promise.all(
+            //     newOrder.orderedItems.forEach((item: IOrderItem) => {
+            //         Storage.findById(item.itemId).then(
+            //             (element: unknown) => {
+            //                 console.log(
+            //                     'elementQuantity => ',
+            //                     (element as IOrderItem).quantity
+            //                 )
+            //             }
+            //             // Storage.findByIdAndUpdate(item.itemId, {
+            //             //     quantity:
+            //             //         (element as IOrderItem).quantity -
+            //             //         item.quantity,
+            //             // })
+            //         )
+            //     })
+            // ).then((result) =>
+            //     res.json({
+            //         message: 'Order created successfully',
+            //         oder: newOrder,
+            //     })
+            // )
+        })
     })
 })
 
@@ -229,7 +268,7 @@ router.put(
             )
         }
         Order.findById(orderId).then((order) => {
-            if (order?.confirmDeliveredOrderBarId) {
+            if (order?.confirmDeliveredOrderDeliveryId) {
                 return next(
                     new Error('Order is already confirmed on the delivery side')
                 )
