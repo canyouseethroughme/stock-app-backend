@@ -8,6 +8,8 @@ import cors from 'cors'
 import { createUsers } from './src/seeds/user'
 import { createStorage } from './src/seeds/storage'
 
+const PORT = process.env.PORT || 8080;
+
 const app = express()
 app.use(json())
 
@@ -25,4 +27,4 @@ app.use('/users', usersRouter)
 app.use('/orders', ordersRouter)
 app.use('/storage', storageRouter)
 
-app.listen(8080, () => console.log('App running on port 8080'))
+app.listen(PORT, () => console.log(`App running on port ${PORT}`))
