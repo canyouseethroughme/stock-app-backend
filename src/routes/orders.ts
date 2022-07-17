@@ -19,7 +19,7 @@ router.get('/', isAuthenticated, function (req, res, next) {
 router.delete('/:orderId', isAuthenticated, function (req, res, next) {
     const { orderId } = req.params
     const { user } = req?.body
-    if (!user || user.role !== 'bar' || user.role !== 'admin') {
+    if (!user || (user.role !== 'bar' && user.role !== 'admin')) {
         return next(new Error("You don't have the rights"))
     }
 
