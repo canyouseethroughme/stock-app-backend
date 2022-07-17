@@ -49,47 +49,72 @@ router.delete('/:orderId', isAuthenticated, function (req, res, next) {
     )
 })
 
-router.put('/edit-order', isAuthenticated, function (req, res, next) {
+router.put('/edit-order', isAuthenticated, async function (req, res, next) {
     const { user, orderedItems, comment, orderId } = req?.body
     if (!user || user.role !== 'bar' || user.role !== 'admin')
-        Order.findById(orderId).then((item) => {
-            if (item && item.orderedItems) {
-                item?.orderedItems.forEach((orderItem: unknown) => {
-                    const orderedQuantity = (orderItem as IOrderItem).quantity
-                    const itemId = (orderItem as IOrderItem).itemId
+        try {
+            const order = await Order.findById(orderId).exec()
 
-                    Storage.findById(itemId).then((foundStorageItem) => {
-                        const newOrderedIndex = orderedItems.findIndex(
-                            (el: IOrderItem) =>
-                                el.itemId === (orderItem as IOrderItem).itemId
-                        )
-                        let currentOrderedNo = 0
-                        if (newOrderedIndex >= 0) {
-                            currentOrderedNo =
-                                orderedItems[newOrderedIndex].quantity
-                        }
-                        const currentTotalQuantity = foundStorageItem?.quantity
-                        const newQuantity =
-                            (currentTotalQuantity as number) +
-                            orderedQuantity -
-                            currentOrderedNo
+            if (order && order.orderedItems) {
+                Promise.all(
+                    order.orderedItems.map(
+                        (orderItem) =>
+                            new Promise(async (resolve, reject) => {
+                                const orderedQuantity = (
+                                    orderItem as IOrderItem
+                                ).quantity
+                                const itemId = (orderItem as IOrderItem).itemId
 
-                        Storage.findByIdAndUpdate(itemId, {
-                            quantity: newQuantity,
-                        }).then((newItem) =>
-                            console.log('updated item => ', newItem)
-                        )
-                    })
-                })
+                                const foundStorageItem = await Storage.findById(
+                                    itemId
+                                ).exec()
+
+                                if (foundStorageItem) {
+                                    const newOrderedIndex =
+                                        orderedItems.findIndex(
+                                            (el: IOrderItem) =>
+                                                el.itemId ===
+                                                (orderItem as IOrderItem).itemId
+                                        )
+                                    let currentOrderedNo = 0
+
+                                    if (newOrderedIndex >= 0) {
+                                        currentOrderedNo =
+                                            orderedItems[newOrderedIndex]
+                                                .quantity
+                                    }
+
+                                    const currentTotalQuantity =
+                                        foundStorageItem?.quantity
+
+                                    const newQuantity =
+                                        (currentTotalQuantity as number) +
+                                        orderedQuantity -
+                                        currentOrderedNo
+
+                                    Storage.findByIdAndUpdate(itemId, {
+                                        quantity: newQuantity,
+                                    }).then((newItem) => {
+                                        resolve(true)
+                                    })
+                                }
+                            })
+                    )
+                ).then((results) =>
+                    Order.findByIdAndUpdate(orderId, {
+                        orderedItems,
+                        comment,
+                    }).then((newOrder) =>
+                        res.json({
+                            message: 'Order updated successfully',
+                            order: newOrder,
+                        })
+                    )
+                )
             }
-        })
-
-    Order.findByIdAndUpdate(orderId, {
-        orderedItems,
-        comment,
-    }).then((newOrder) =>
-        res.json({ message: 'Order updated successfully', order: newOrder })
-    )
+        } catch (err) {
+            res.json({ err })
+        }
 })
 
 //create order
@@ -121,11 +146,6 @@ router.post('/create-order', isAuthenticated, function (req, res, next) {
             orderedItems,
             comment,
         }).then((newOrder) => {
-            console.log(
-                '🚀 ~ file: orders.ts ~ line 59 ~ Order.find ~ newOrder',
-                newOrder
-            )
-
             newOrder.orderedItems.forEach((item: unknown) => {
                 const orderedQuantity = (item as IOrderItem).quantity
                 const itemId = (item as IOrderItem).itemId
@@ -164,7 +184,6 @@ router.put(
             return next(new Error('You need to provide an orderId'))
         }
         Order.findById(orderId).then((order) => {
-            console.log('orderfound => ', order)
             if (order?.confirmedOrderStorageId) {
                 return next(new Error('Order is already confirmed'))
             }
@@ -176,11 +195,6 @@ router.put(
                     next(new Error('something went wrong, please try again'))
                 )
                 .then((updatedOrder) => {
-                    console.log('orderId => ', orderId)
-                    console.log(
-                        '🚀 ~ file: orders.ts ~ line 73 ~ .then ~ updatedOrder',
-                        updatedOrder
-                    )
                     res.json({
                         message: 'Order confirmed successfully!',
                         order: updatedOrder,
@@ -218,10 +232,60 @@ router.put('/confirm-packed-order', isAuthenticated, function (req, res, next) {
                 next(new Error('something went wrong, please try again'))
             )
             .then((updatedOrder) => {
-                res.json({
-                    message: 'Order packed successfully!',
-                    order: updatedOrder,
-                })
+                if (order && order.orderedItems) {
+                    Promise.all(
+                        order?.orderedItems?.map(
+                            (orderItem) =>
+                                new Promise(async (resolve, reject) => {
+                                    const orderedQuantity = (
+                                        orderItem as IOrderItem
+                                    ).quantity
+                                    const itemId = (orderItem as IOrderItem)
+                                        .itemId
+
+                                    const foundStorageItem =
+                                        await Storage.findById(itemId).exec()
+
+                                    if (foundStorageItem) {
+                                        const newOrderedIndex =
+                                            confirmPackedOrderStorage.findIndex(
+                                                (el: IOrderItem) =>
+                                                    el.itemId ===
+                                                    (orderItem as IOrderItem)
+                                                        .itemId
+                                            )
+                                        let currentOrderedNo = 0
+
+                                        if (newOrderedIndex >= 0) {
+                                            currentOrderedNo =
+                                                confirmPackedOrderStorage[
+                                                    newOrderedIndex
+                                                ].quantity
+                                        }
+
+                                        const currentTotalQuantity =
+                                            foundStorageItem?.quantity
+
+                                        const newQuantity =
+                                            (currentTotalQuantity as number) +
+                                            orderedQuantity -
+                                            currentOrderedNo
+
+                                        Storage.findByIdAndUpdate(itemId, {
+                                            quantity: newQuantity,
+                                        }).then((newItem) => {
+                                            resolve(true)
+                                        })
+                                    }
+                                })
+                        )
+                    ).then((results) =>
+                        res.json({
+                            message: 'Order packed successfully!',
+                            order: updatedOrder,
+                        })
+                    )
+                }
             })
     })
 })
