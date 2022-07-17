@@ -4,7 +4,7 @@ interface IStorage {
     name: string
     measurementUnit: string
     quantity: number
-    category: 'spirits' | 'beer' | 'soda'
+    category: 'Spirits' | 'Beer / Cider' | 'Mixers' | 'Ready to drink'
 }
 
 const storageSchema = new mongoose.Schema(
@@ -15,7 +15,14 @@ const storageSchema = new mongoose.Schema(
         },
         measurementUnit: {
             type: String,
-            enum: ['bottle', 'case'],
+            enum: [
+                'Case of 24',
+                'Case of 20',
+                'Case of 30',
+                'Case of 18',
+                'Bottle',
+                'Case',
+            ],
             required: true,
         },
         quantity: {
@@ -24,7 +31,7 @@ const storageSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            enum: ['spirits', 'beer', 'soda'],
+            enum: ['Spirits', 'Beer / Cider', 'Mixers', 'Ready to drink'],
             required: true,
         },
     },
