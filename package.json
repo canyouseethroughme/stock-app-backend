@@ -2,6 +2,9 @@
     "name": "stock-app-backend",
     "version": "1.0.0",
     "main": "index.ts",
+    "engines": {
+        "node": "16.x"
+    },
     "repository": "git@github.com:canyouseethroughme/stock-app-backend.git",
     "author": "Andrei Atudorei <stefandrei123@gmail.com> & Alin Chiosa <alin.chiosa@gmail.com>",
     "license": "MIT",
