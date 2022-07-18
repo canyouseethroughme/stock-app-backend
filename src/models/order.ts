@@ -5,13 +5,18 @@ interface IOrder {
     orderedItems: IOrderItem[]
     comment?: string
     confirmedOrderStorageId?: string
+    confirmedOrderStorageTime?: string
     confirmPackedOrderStorage?: IOrderItem[]
     confirmPackedOrderStorageId?: string
+    confirmPackedOrderStorageTime?: string
     confirmOrderPickupId?: string
+    confirmOrderPickupTime?: string
     confirmOrderPickedUp?: IOrderItem[]
     confirmDeliveredOrderBarId?: string
+    confirmDeliveredOrderBarTime?: string
     confirmDeliveredOrderBar: IOrderItem[]
     confirmDeliveredOrderDeliveryId?: string
+    confirmDeliveredOrderDeliveryTime?: string
     confirmDeliveredOrderDelivery?: IOrderItem[]
 }
 interface IOrderItem {
@@ -45,6 +50,9 @@ const orderSchema = new mongoose.Schema(
         confirmedOrderStorageId: {
             type: String,
         },
+        confirmedOrderStorageTime: {
+            type: String,
+        },
         confirmPackedOrderStorage: [
             {
                 itemId: String,
@@ -56,7 +64,13 @@ const orderSchema = new mongoose.Schema(
         confirmPackedOrderStorageId: {
             type: String,
         },
+        confirmPackedOrderStorageTime: {
+            type: String,
+        },
         confirmOrderPickupId: {
+            type: String,
+        },
+        confirmOrderPickupTime: {
             type: String,
         },
         confirmOrderPickedUp: [
@@ -70,6 +84,9 @@ const orderSchema = new mongoose.Schema(
         confirmDeliveredOrderBarId: {
             type: String,
         },
+        confirmDeliveredOrderBarTime: {
+            type: String,
+        },
         confirmDeliveredOrderBar: [
             {
                 itemId: String,
@@ -79,6 +96,9 @@ const orderSchema = new mongoose.Schema(
             },
         ],
         confirmDeliveredOrderDeliveryId: {
+            type: String,
+        },
+        confirmDeliveredOrderDeliveryTime: {
             type: String,
         },
         confirmDeliveredOrderDelivery: [

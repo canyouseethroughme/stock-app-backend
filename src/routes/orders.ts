@@ -190,6 +190,7 @@ router.put(
 
             Order.findByIdAndUpdate(orderId, {
                 confirmedOrderStorageId: user.id,
+                confirmedOrderStorageTime: new Date().toISOString(),
             })
                 .catch((err) =>
                     next(new Error('something went wrong, please try again'))
@@ -226,6 +227,7 @@ router.put('/confirm-packed-order', isAuthenticated, function (req, res, next) {
 
         Order.findByIdAndUpdate(orderId, {
             confirmPackedOrderStorageId: user.id,
+            confirmPackedOrderStorageTime: new Date().toISOString(),
             confirmPackedOrderStorage,
         })
             .catch((err) =>
@@ -311,6 +313,7 @@ router.put('/confirm-pick-up', isAuthenticated, function (req, res, next) {
 
         Order.findByIdAndUpdate(orderId, {
             confirmOrderPickupId: user.id,
+            confirmOrderPickupTime: new Date().toISOString(),
             confirmOrderPickedUp,
         })
             .catch((err) =>
@@ -350,6 +353,7 @@ router.put(
 
             Order.findByIdAndUpdate(orderId, {
                 confirmDeliveredOrderBarId: user.id,
+                confirmDeliveredOrderBarTime: new Date().toISOString(),
                 confirmDeliveredOrderBar: confirmedItems,
             })
                 .catch((err) =>
@@ -390,6 +394,7 @@ router.put(
 
             Order.findByIdAndUpdate(orderId, {
                 confirmDeliveredOrderDeliveryId: user.id,
+                confirmDeliveredOrderDeliveryTime: new Date().toISOString(),
                 confirmDeliveredOrderDelivery: confirmedItems,
             })
                 .catch((err) =>
