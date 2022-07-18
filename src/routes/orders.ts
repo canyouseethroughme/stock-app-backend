@@ -119,7 +119,7 @@ router.put('/edit-order', isAuthenticated, async function (req, res, next) {
 
 //create order
 router.post('/create-order', isAuthenticated, function (req, res, next) {
-    const { user, orderedItems, comment } = req?.body
+    const { user, orderedItems, comment, barName } = req?.body
 
     if (!user || (user?.role !== 'bar' && user?.role !== 'admin')) {
         return next(new Error('You dont have the rights'))
@@ -142,7 +142,7 @@ router.post('/create-order', isAuthenticated, function (req, res, next) {
 
         Order.create({
             createdBy: user.id,
-            barName: user?.barName ?? 'admin',
+            barName: user.role === 'bar' ? user?.barName : barName,
             orderedItems,
             comment,
         }).then((newOrder) => {
