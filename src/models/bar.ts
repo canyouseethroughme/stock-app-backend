@@ -1,14 +1,14 @@
 import mongoose from 'mongoose'
 
 interface IBar {
-    name: 'Vessel' | 'Space' | 'Astral'
+    name: 'Vessel' | 'Space' | 'Garden'
     users: String[]
 }
 
 const barSchema = new mongoose.Schema({
     name: {
         type: String,
-        enum: ['Vessel', 'Space', 'Astral'],
+        enum: ['Vessel', 'Space', 'Garden'],
         required: true,
     },
     users: [

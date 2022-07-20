@@ -59,7 +59,7 @@ export const createUsers = () => {
         role: 'bar',
         username: 'bar3',
         password: 'bar3',
-        barName: 'Astral',
+        barName: 'Garden',
     })
     User.create({
         role: 'bar',
@@ -77,7 +77,7 @@ export const createUsers = () => {
         role: 'bar',
         username: 'bar6',
         password: 'bar6',
-        barName: 'Astral',
+        barName: 'Garden',
     })
     User.create({
         role: 'bar',
