@@ -8,7 +8,7 @@ import cors from 'cors'
 import { createUsers } from './src/seeds/user'
 import { createStorage } from './src/seeds/storage'
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080
 
 const app = express()
 app.use(json())
