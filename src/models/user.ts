@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     },
     barName: {
         type: String,
-        enum: ['Vessel', 'Space', 'Gardern'],
+        enum: ['Vessel', 'Space', 'Garden'],
         required: false,
     },
     password: {
