@@ -8,7 +8,7 @@ const router = express.Router()
 router.get('/', isAuthenticated, function (req, res, next) {
     const { user } = req?.body
     Order.find({}).then((items) => {
-        if (user.role === 'bar') {
+        if (user?.role === 'bar') {
             const barOrders = items.filter((item) => item.createdBy === user.id)
             return res.json({ orders: barOrders })
         }
@@ -19,7 +19,7 @@ router.get('/', isAuthenticated, function (req, res, next) {
 router.delete('/:orderId', isAuthenticated, function (req, res, next) {
     const { orderId } = req.params
     const { user } = req?.body
-    if (!user || (user.role !== 'bar' && user.role !== 'admin')) {
+    if (!user || (user?.role !== 'bar' && user?.role !== 'admin')) {
         return next(new Error("You don't have the rights"))
     }
 
@@ -51,7 +51,7 @@ router.delete('/:orderId', isAuthenticated, function (req, res, next) {
 
 router.put('/edit-order', isAuthenticated, async function (req, res, next) {
     const { user, orderedItems, comment, orderId } = req?.body
-    if (!user || user.role !== 'bar' || user.role !== 'admin')
+    if (!user || user?.role !== 'bar' || user?.role !== 'admin')
         try {
             const order = await Order.findById(orderId).exec()
 
@@ -209,7 +209,7 @@ router.put(
 router.put('/confirm-packed-order', isAuthenticated, function (req, res, next) {
     const { user, orderId, confirmPackedOrderStorage } = req?.body
 
-    if (!user || (user.role !== 'storage' && user.role !== 'admin')) {
+    if (!user || (user?.role !== 'storage' && user?.role !== 'admin')) {
         return next(new Error('You dont have the rights'))
     }
     if (!orderId || !confirmPackedOrderStorage) {
@@ -296,7 +296,7 @@ router.put('/confirm-packed-order', isAuthenticated, function (req, res, next) {
 router.put('/confirm-pick-up', isAuthenticated, function (req, res, next) {
     const { user, orderId, confirmOrderPickedUp } = req?.body
 
-    if (!user || (user.role !== 'delivery' && user.role !== 'admin')) {
+    if (!user || (user?.role !== 'delivery' && user?.role !== 'admin')) {
         return next(new Error('You dont have the rights'))
     }
 
@@ -415,9 +415,9 @@ router.get('/active-orders', isAuthenticated, function (req, res, next) {
     const { user } = req.body
 
     if (
-        user.role === 'admin' ||
-        user.role === 'bar' ||
-        user.role === 'delivery'
+        user?.role === 'admin' ||
+        user?.role === 'bar' ||
+        user?.role === 'delivery'
     ) {
         Order.find({
             confirmDeliveredOrderBarId: undefined,
@@ -425,7 +425,7 @@ router.get('/active-orders', isAuthenticated, function (req, res, next) {
         }).then((orders) => res.json({ orders }))
     }
 
-    if (user.role === 'bar') {
+    if (user?.role === 'bar') {
         Order.find({ confirmOrderPickupId: undefined }).then((orders) => {
             const barOrders = orders.filter(
                 (item) => item.createdBy === user.id
