@@ -1,7 +1,7 @@
 {
     "name": "stock-app-backend",
     "version": "1.0.0",
-    "type": "module",
+    "type": "commonjs",
     "main": "index.ts",
     "engines": {
         "node": "16.x"

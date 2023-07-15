@@ -42,4 +42,4 @@ const storageSchema = new mongoose.Schema(
 
 const Storage = mongoose.model('Storage', storageSchema)
 
-export { Storage, IStorage }
+export { Storage, type IStorage }

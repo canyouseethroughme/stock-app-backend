@@ -21,4 +21,4 @@ const barSchema = new mongoose.Schema({
 
 const Bar = mongoose.model('Bar', barSchema)
 
-export { Bar, IBar }
+export { Bar, type IBar }
