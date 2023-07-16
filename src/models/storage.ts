@@ -20,6 +20,7 @@ const storageSchema = new mongoose.Schema(
                 'Case of 20',
                 'Case of 30',
                 'Case of 18',
+                'Keg/fustage',
                 'Bottle',
                 'Case',
             ],
