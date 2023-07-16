@@ -49,7 +49,8 @@ router.get('/test-token', isAuthenticated, function (req, res, next) {
 // create user
 router.post('/create', function (req, res, next) {
     const { role, username, barName, password } = req.body
-    if (!role || !username || !barName || !password) {
+    const newBarName = barName ?? undefined
+    if (!role || !username || !password) {
         return next(new Error('Wrong input'))
     }
 
@@ -58,8 +59,12 @@ router.post('/create', function (req, res, next) {
         .then((user) => {
             if (user) return next(new Error('Username already exists'))
 
-            User.create({ role, username, barName, password }).then((newUser) =>
-                res.json({ message: 'User created successfully', use: newUser })
+            User.create({ role, username, barName: newBarName, password }).then(
+                (newUser) =>
+                    res.json({
+                        message: 'User created successfully',
+                        use: newUser,
+                    })
             )
         })
 })
@@ -80,6 +85,19 @@ router.get('/getUsersByCategory', isAuthenticated, function (req, res, next) {
             users: items,
         })
     })
+})
+
+router.delete('/delete/:itemId', isAuthenticated, function (req, res, next) {
+    const { itemId } = req.params
+    const { user } = req.body
+
+    if (!user || user.role !== 'admin') {
+        return next(new Error('You dont have the rights'))
+    }
+
+    User.findByIdAndDelete(itemId).then(() =>
+        res.json({ message: 'User deleted successfully' })
+    )
 })
 
 export default router
