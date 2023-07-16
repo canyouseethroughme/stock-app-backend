@@ -10,9 +10,18 @@ router.get('/', isAuthenticated, function (req, res, next) {
     Order.find({}).then((items) => {
         if (user?.role === 'bar') {
             const barOrders = items.filter((item) => item.createdBy === user.id)
-            return res.json({ orders: barOrders })
+
+            return res.json({
+                orders: barOrders.filter(
+                    (item) => item.createdAt.getFullYear() >= 2023
+                ),
+            })
         }
-        return res.json({ orders: items })
+        return res.json({
+            orders: items.filter(
+                (item) => item.createdAt.getFullYear() >= 2023
+            ),
+        })
     })
 })
 
@@ -422,7 +431,13 @@ router.get('/active-orders', isAuthenticated, function (req, res, next) {
         Order.find({
             confirmDeliveredOrderBarId: undefined,
             confirmDeliveredOrderDeliveryId: undefined,
-        }).then((orders) => res.json({ orders }))
+        }).then((orders) =>
+            res.json({
+                orders: orders.filter(
+                    (item) => item.createdAt.getFullYear() >= 2023
+                ),
+            })
+        )
     }
 
     if (user?.role === 'bar') {
