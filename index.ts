@@ -14,7 +14,7 @@ const app = express()
 app.use(json())
 
 mongoose.connect(
-    'mongodb+srv://root:root@stockapp.gk07c.mongodb.net/?retryWrites=true&w=majority',
+    'mongodb+srv://root:root@cluster0.jhwyczu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
     () => console.log('database connection successful')
 )
 app.use(cors())
