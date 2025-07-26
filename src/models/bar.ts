@@ -8,7 +8,7 @@ interface IBar {
 const barSchema = new mongoose.Schema({
     name: {
         type: String,
-        enum: ['Vessel', 'Space', 'Garden', 'Beach', 'Entrance'],
+        enum: ['Vessel', 'Space', 'Garden', 'Beach', 'Entrance', 'HQ'],
         required: true,
     },
     users: [
