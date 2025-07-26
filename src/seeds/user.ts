@@ -135,12 +135,12 @@ export const createUsers = () => {
         barName: 'Garden',
     })
 
-    User.create({ role: 'storage', username: 'store1', password: 'tools' })
-    User.create({ role: 'storage', username: 'store2', password: 'brave' })
-    User.create({ role: 'storage', username: 'store3', password: 'look' })
-    User.create({ role: 'storage', username: 'store4', password: 'give' })
-    User.create({ role: 'storage', username: 'store5', password: 'find' })
-    User.create({ role: 'storage', username: 'store6', password: 'year' })
+    // User.create({ role: 'storage', username: 'store1', password: 'tools' })
+    // User.create({ role: 'storage', username: 'store2', password: 'brave' })
+    // User.create({ role: 'storage', username: 'store3', password: 'look' })
+    // User.create({ role: 'storage', username: 'store4', password: 'give' })
+    // User.create({ role: 'storage', username: 'store5', password: 'find' })
+    // User.create({ role: 'storage', username: 'store6', password: 'year' })
 
     console.log('saved')
 }

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 interface IBar {
-    name: 'Vessel' | 'Space' | 'Garden'
+    name: 'Vessel' | 'Space' | 'Garden' | 'Beach' | 'Entrance' | 'HQ'
     users: String[]
 }
 
